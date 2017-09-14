@@ -17,7 +17,6 @@ package com.starcarrlane.coroutines.experimental
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import kotlin.coroutines.experimental.AbstractCoroutineContextElement
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.ContinuationInterceptor
@@ -28,7 +27,6 @@ import kotlin.coroutines.experimental.ContinuationInterceptor
  */
 private class AndroidContinuation<T>(val cont: Continuation<T>) : Continuation<T> by cont {
     override fun resume(value: T) {
-        Log.d("coroutineTag", "Value: ${value}")
         if (Looper.myLooper() == Looper.getMainLooper())
             cont.resume(value)
         else

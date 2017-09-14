@@ -71,30 +71,32 @@ class MainActivity : AppCompatActivity(), PostClickListener {
 
         launch(Android) {
             try {
-//                val result = SampleClient.fetchPosts()
-
-                Log.d("coroutineTag", "BP1@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
+                logThreadInfo("BP1")
                 val result2 = async(CommonPool) {
-                    Log.d("coroutineTag", "BP2@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
                     delay(500)
-                    Log.d("coroutineTag", "BP3@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
+                    logThreadInfo("BP2")
                     val request = Request.Builder().url("https://jsonplaceholder.typicode.com/posts").build()
                     val response =  SampleClient.client.newCall(request).execute()
                     val postsType = object : TypeToken<List<Post>>() {}.type
                     Gson().fromJson<List<Post>>(response.body().string(), postsType)
                 }
 
-                Log.d("coroutineTag", "BP4@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
+                logThreadInfo("BP3")
                 val posts = result2.await()
-                Log.d("coroutineTag", "BP5@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
+
+                logThreadInfo("BP4")
                 postsAdapter.setElements(posts) // will suspend until the call is finished
                 postsAdapter.notifyDataSetChanged()
             } catch (exception: IOException){
                 Toast.makeText(this@MainActivity, "Phone not connected or service down", Toast.LENGTH_SHORT).show()
             }
-
         }
 
-        Log.d("coroutineTag", "BP6@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
+        logThreadInfo("BP5")
+
+    }
+
+    private fun logThreadInfo(msg: String) {
+        Log.d("coroutineTag", "${msg}@Thread(${Thread.currentThread().id}, ${Thread.currentThread().name})")
     }
 }
